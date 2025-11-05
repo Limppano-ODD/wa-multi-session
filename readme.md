@@ -141,6 +141,30 @@ await whatsapp.sendTyping({
 });
 ```
 
+Send Poll Message
+
+```ts
+await whatsapp.sendPollMessage({
+  sessionId: "session1",
+  to: "6281234567890",
+  pollName: "What is your favorite color?",
+  pollValues: ["Red", "Blue", "Green", "Yellow"],
+  selectableCount: 1, // default: 1 (single choice)
+});
+```
+
+Send Multi-Select Poll Message
+
+```ts
+await whatsapp.sendPollMessage({
+  sessionId: "session1",
+  to: "6281234567890",
+  pollName: "Select your favorite fruits",
+  pollValues: ["Apple", "Banana", "Orange", "Grape", "Mango"],
+  selectableCount: 3, // allow selecting up to 3 options
+});
+```
+
 ## Listener Usage/Examples
 
 Add Listener/Callback When Receive a Message

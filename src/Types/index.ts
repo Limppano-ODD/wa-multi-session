@@ -19,6 +19,25 @@ export interface SendReadTypes {
   key: proto.IMessageKey;
 }
 
+export interface SendPollMessageTypes extends SendMessageTypes {
+  /**
+   * Poll name/question
+   */
+  pollName: string;
+  /**
+   * Poll options/values
+   */
+  pollValues: string[];
+  /**
+   * Number of options that can be selected (default: 1)
+   */
+  selectableCount?: number;
+  /**
+   * Send poll to announcement group (default: false)
+   */
+  toAnnouncementGroup?: boolean;
+}
+
 export interface MessageReceived extends proto.IWebMessageInfo {
   /**
    * Your Session ID

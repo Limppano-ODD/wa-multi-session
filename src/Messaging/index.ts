@@ -4,6 +4,7 @@ import { getSession } from "../Socket";
 import {
   SendMediaTypes,
   SendMessageTypes,
+  SendPollMessageTypes,
   SendReadTypes,
   SendTypingTypes,
 } from "../Types";
@@ -193,6 +194,60 @@ export const sendSticker = async ({
               url: media,
             }
           : media,
+    },
+    {
+      quoted: props.answering,
+    }
+  );
+};
+
+/**
+ * Send a poll message
+ *
+ * @param sessionId - Session ID
+ * @param to - Target
+ * @param pollName - Poll question/name
+ * @param pollValues - Array of poll options
+ * @param selectableCount - Number of options that can be selected (default: 1)
+ * @param toAnnouncementGroup - Send to announcement group (default: false)
+ */
+export const sendPollMessage = async ({
+  sessionId,
+  to,
+  pollName,
+  pollValues,
+  selectableCount = 1,
+  toAnnouncementGroup = false,
+  isGroup = false,
+  ...props
+}: SendPollMessageTypes): Promise<proto.WebMessageInfo | undefined> => {
+  const session = getSession(sessionId);
+  if (!session) throw new WhatsappError(Messages.sessionNotFound(sessionId));
+  to = phoneToJid({ to, isGroup });
+
+  if (!pollName) {
+    throw new WhatsappError("Poll name is required");
+  }
+
+  if (!pollValues || pollValues.length < 2) {
+    throw new WhatsappError("Poll must have at least 2 options");
+  }
+
+  if (selectableCount < 1 || selectableCount > pollValues.length) {
+    throw new WhatsappError(
+      `Selectable count must be between 1 and ${pollValues.length}`
+    );
+  }
+
+  return await session.sendMessage(
+    to,
+    {
+      poll: {
+        name: pollName,
+        values: pollValues,
+        selectableCount: selectableCount,
+        toAnnouncementGroup: toAnnouncementGroup,
+      },
     },
     {
       quoted: props.answering,
